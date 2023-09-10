@@ -60,17 +60,17 @@ summary(data[-1])
 library(ggplot2)
 library(zoo)
 library(dplyr)
-
+#boxplot of returns
 data$years <- format(as.Date(data$dates,format="%Y-%m-%d"),"%Y")
 ggplot(data,aes(x=years,y=today))+
   geom_boxplot(fill="blue",color="black")+
   ggtitle("Boxplot of Daily Returns")+
   xlab("Year")+
   ylab("Returns")
-
+#scatter plot of risk and return
 plot(data$hvt30d,data$today,xlab = "Volatility",
      ylab = "Return",main = "Risk-Return")
-
+#plot of Moving averages and price
 df <- data %>%
   mutate(sma_50 = zoo::rollmean(price, k = 50, fill = NA), 
          sma_100 = zoo::rollmean(price, k = 100, fill = NA),
@@ -83,3 +83,20 @@ ggplot(data = df, aes(x = dates)) +
   labs(title = "Price with Moving Averages", x = "Date", y = "Price") +
   scale_color_manual(values = c("Price" = "black", "50 day MA" = "red",
                                 "100 day MA" = "green", "200 day MA" = "blue"))
+#plot to compare yesterday's returns and volume
+data$Type <- "Volume"
+data$Value <- data$volume.yesterday
+
+data_returns <- data
+data_returns$Type <- "Return"
+data_returns$Value <- data$yesterday
+
+combined_data <- rbind(data, data_returns)
+
+ggplot(combined_data, aes(x = dates, y = Value)) +
+  geom_bar(data = subset(combined_data, Type == "Volume"), stat = "identity", 
+           aes(fill = "red")) +
+  geom_line(data = subset(combined_data, Type == "Return"), 
+            aes(color = "black"), size = 1) +
+  labs(title = "Daily returns and volume", x = "Date", y = "Values") +
+  facet_grid(Type ~ ., scales = "free_y")

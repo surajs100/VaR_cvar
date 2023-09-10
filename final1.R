@@ -76,10 +76,10 @@ df <- data %>%
          sma_100 = zoo::rollmean(price, k = 100, fill = NA),
          sma_200 = zoo::rollmean(price, k = 200, fill = NA))
 ggplot(data = df, aes(x = dates)) +
-  geom_line(aes(y = price, color = "Price"), size = 1) +
-  geom_line(aes(y = sma_50, color = "50 day MA"), size = 1) +
-  geom_line(aes(y = sma_100, color = "100 day MA"), size = 1) +
-  geom_line(aes(y = sma_200, color = "200 day MA"), size = 1) +
+  geom_line(aes(y = price, color = "Price"), size = 0.7) +
+  geom_line(aes(y = sma_50, color = "50 day MA"), size = 0.5) +
+  geom_line(aes(y = sma_100, color = "100 day MA"), size = 0.5) +
+  geom_line(aes(y = sma_200, color = "200 day MA"), size = 0.5) +
   labs(title = "Price with Moving Averages", x = "Date", y = "Price") +
   scale_color_manual(values = c("Price" = "black", "50 day MA" = "red",
                                 "100 day MA" = "green", "200 day MA" = "blue"))

@@ -1,6 +1,7 @@
 data <- read.csv("C:/Users/Worksatation/Downloads/ROBO2.csv")
 data$dates <- as.Date(data$dates,format='%Y-%m-%d')
 returns <- data$today/100
+#question1
 h_var <- function(returns, significance) {
   return(quantile(returns, significance))
 }
@@ -25,7 +26,7 @@ print(paste("Historical VaR: ", var_historical))
 print(paste("Parametric VaR: ", var_parametric))
 print(paste("Monte Carlo VaR: ", var_mc))
 
-
+#question2
 h_cvar <- function(returns, significance) {
   var <- quantile(returns, significance)
   return(mean(returns[returns < var]))
@@ -52,3 +53,33 @@ cvar_mc <- mc_cvar(returns,0.05,100000)
 print(paste("Historical cVaR: ", cvar_historical))
 print(paste("Parametric cVaR: ", cvar_parametric))
 print(paste("Monte Carlo cVaR: ", cvar_mc))
+
+#question3(i)
+summary(data[-1])
+
+library(ggplot2)
+library(zoo)
+library(dplyr)
+
+data$years <- format(as.Date(data$dates,format="%Y-%m-%d"),"%Y")
+ggplot(data,aes(x=years,y=today))+
+  geom_boxplot(fill="blue",color="black")+
+  ggtitle("Boxplot of Daily Returns")+
+  xlab("Year")+
+  ylab("Returns")
+
+plot(data$hvt30d,data$today,xlab = "Volatility",
+     ylab = "Return",main = "Risk-Return")
+
+df <- data %>%
+  mutate(sma_50 = zoo::rollmean(price, k = 50, fill = NA), 
+         sma_100 = zoo::rollmean(price, k = 100, fill = NA),
+         sma_200 = zoo::rollmean(price, k = 200, fill = NA))
+ggplot(data = df, aes(x = dates)) +
+  geom_line(aes(y = price, color = "Price"), size = 1) +
+  geom_line(aes(y = sma_50, color = "50 day MA"), size = 1) +
+  geom_line(aes(y = sma_100, color = "100 day MA"), size = 1) +
+  geom_line(aes(y = sma_200, color = "200 day MA"), size = 1) +
+  labs(title = "Price with Moving Averages", x = "Date", y = "Price") +
+  scale_color_manual(values = c("Price" = "black", "50 day MA" = "red",
+                                "100 day MA" = "green", "200 day MA" = "blue"))

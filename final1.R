@@ -1,6 +1,6 @@
 data <- read.csv("C:/Users/Worksatation/Downloads/ROBO2.csv")
 data$dates <- as.Date(data$dates,format='%Y-%m-%d')
-returns <- diff(log(data$price))
+returns <- data$today/100
 h_var <- function(returns, significance) {
   return(quantile(returns, significance))
 }

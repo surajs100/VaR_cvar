@@ -1,3 +1,49 @@
-import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+def black_scholes_call(S, K, T, rf, s):
+    d1 = (np.log(S/K) + (rf + (s**2)/2) * T) / (s * np.sqrt(T))
+    d2 = d1 - s * np.sqrt(T)
+    call_price = S * norm.cdf(d1) - K * np.exp(-rf * T) * norm.cdf(d2)
+    return call_price
+
+black_scholes_call(50.0, 80.0, 0.25, 0.05, 0.1)
+S = np.linspace(50, 150, 100)  # Stock price
+K = np.linspace(80, 120, 100)  # Strike price
+T = np.linspace(0.25, 2, 100)  # Exercise date (in years)
+rf = 0.05  # Risk-free rate
+s = np.linspace(0.1, 0.5, 100)  # Volatility of the stock
+# Calculate option prices for varying inputs
+option_prices_S = black_scholes_call(S, K[0], T[0], rf, s[0])
+option_prices_K = black_scholes_call(S[0], K, T[0], rf, s[0])
+option_prices_T = black_scholes_call(S[0], K[0], T, rf, s[0])
+option_prices_rf = black_scholes_call(S[0], K[0], T[0], rf, s[0])
+option_prices_s = black_scholes_call(S[0], K[0], T[0], rf, s)
+
+# Plotting
+plt.figure()
+plt.plot(S, option_prices_S)
+plt.xlabel('Stock Price (S)')
+plt.ylabel('Option Price')
+plt.title('Option Price of European Call Option for Varying Stock Price')
+
+plt.figure()
+plt.plot(K, option_prices_K)
+plt.xlabel('Strike Price (K)')
+plt.ylabel('Option Price')
+plt.title('Option Price of European Call Option for Varying Strike Price')
+
+plt.figure()
+plt.plot(T, option_prices_T)
+plt.xlabel('Exercise Date (T)')
+plt.ylabel('Option Price')
+plt.title('Option Price of European Call Option for Varying Exercise Date')
+
+plt.figure()
+plt.plot(s, option_prices_s)
+plt.xlabel('Volatility (s)')
+plt.ylabel('Option Price')
+plt.title('Option Price of European Call Option for Varying Volatility')
+
+plt.show()
